@@ -99,3 +99,43 @@ button[type="submit"]:hover {
     gap: 10px;
     font-size: 15px;
 }
+#List-container li.purchased-item {
+    text-decoration: line-through;
+    color: #888888;
+    background-color: #fafafa;
+    border-style: solid;
+}
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.action-buttons button {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#mark-purchased-btn {
+    background-color: #e3f2fd;
+    color: #0d47a1; /* Contextual theme color */
+}
+
+#mark-purchased-btn:hover {
+    background-color: #bbdefb;
+}
+
+#clear-list-btn {
+    background-color: #ffebee;
+    color: #c62828; /* Danger button color concept */
+}
+
+#clear-list-btn:hover {
+    background-color: #ffcdd2;
+}
