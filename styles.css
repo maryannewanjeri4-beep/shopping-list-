@@ -32,19 +32,21 @@ h1{
 
 }
 h3{
-    font-size: 16px;
-    color: #666666;
+    font-size: 24px;
+    color: #000;
     margin-top: 30px;
     margin-bottom: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.5px
-}
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}  
 
 .myform{
     background-color: #fdeb9e;
     border: 8px solid #000000;
     padding: 20px;
     border-radius: 8px;
+     
 
 }
 .form-group {

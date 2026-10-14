@@ -11,105 +11,41 @@ const totalWholeEl = document.getElementById("total-whole");
 
 let shoppingList = [];
 
-const formatCurrency = (value) => `$${value.toFixed(2)}`;
+//saves items to the browser
 
-const updateSummary = () => {
-  const selectedTotal = shoppingList
-    .filter((item) => item.selected && !item.purchased)
-    .reduce((sum, item) => sum + item.quantity * item.price, 0);
+const savedText =localStorage.getItem("myShoppingList");
+if(savedText !== null){
+    shoppingList =JSON.parse(savedText);
+}   
 
-  const purchasedTotal = shoppingList
-    .filter((item) => item.purchased)
-    .reduce((sum, item) => sum + item.quantity * item.price, 0);
 
-  const wholeTotal = shoppingList.reduce(
-    (sum, item) => sum + item.quantity * item.price,
-    0,
-  );
+//saves list so that it can be stored
+function saveList(){
+    localStorage.setItem('myShoppingList', JSON.stringify(shoppingList));
+}
 
-  totalSelectedEl.textContent = formatCurrency(selectedTotal);
-  totalPurchasedEl.textContent = formatCurrency(purchasedTotal);
-  totalWholeEl.textContent = formatCurrency(wholeTotal);
-};
+//to show the list to the page
+ function  showList(){
+   listContainer.innerHTML = ''  //prevents items from double counting
 
-const renderList = () => {
-  listContainer.innerHTML = "";
+   let selectedTotal = 0;
+   let purchasedTotal = 0;
+   let wholeTotal = 0;
 
-  if (shoppingList.length === 0) {
-    const emptyItem = document.createElement("li");
-    emptyItem.textContent = "Your list is empty.";
-    listContainer.appendChild(emptyItem);
-    updateSummary();
-    return;
-  }
+   for(let i = 0; i < shoppingList.length; i++){
+    const item = shoppingList[i]    
 
-  shoppingList.forEach((item) => {
-    const listItem = document.createElement("li");
-    listItem.className = `shopping-item ${item.purchased ? "purchased" : ""}`;
+//calculate cost:
+const cost = item.price * item.quantity;
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = item.selected;
-    checkbox.setAttribute("aria-label", `Select ${item.name}`);
-    checkbox.addEventListener("change", () => {
-      item.selected = checkbox.checked;
-      updateSummary();
-    });
+//wholecost:
+wholeTotal = wholeTotal + cost;
+ if (item.purchased === true) {
+            purchasedTotal = purchasedTotal + cost;
+        }
+        if (item.selected === true) {
+            selectedTotal = selectedTotal + cost;
+   }
+}
 
-    const label = document.createElement("label");
-    label.textContent = `${item.name} — ${item.quantity} x ${formatCurrency(item.price)} = ${formatCurrency(item.quantity * item.price)}`;
-    if (item.purchased) {
-      label.style.textDecoration = "line-through";
-    }
-
-    listItem.appendChild(checkbox);
-    listItem.appendChild(label);
-    listContainer.appendChild(listItem);
-  });
-
-  updateSummary();
-};
-
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  const name = itemInput.value.trim();
-  const price = Number.parseFloat(priceInput.value);
-  const quantity = Number.parseInt(quantityInput.value, 10);
-
-  if (!name || Number.isNaN(price) || Number.isNaN(quantity) || price <= 0 || quantity <= 0) {
-    window.alert("Please enter a valid item name, price, and quantity.");
-    return;
-  }
-
-  shoppingList.push({
-    id: Date.now() + Math.random(),
-    name,
-    price,
-    quantity,
-    selected: false,
-    purchased: false,
-  });
-
-  form.reset();
-  itemInput.focus();
-  renderList();
-});
-
-markPurchasedBtn.addEventListener("click", () => {
-  shoppingList = shoppingList.map((item) => {
-    if (item.selected) {
-      return { ...item, selected: false, purchased: true };
-    }
-    return item;
-  });
-
-  renderList();
-});
-
-clearListBtn.addEventListener("click", () => {
-  shoppingList = [];
-  renderList();
-});
-
-renderList();
+ }
