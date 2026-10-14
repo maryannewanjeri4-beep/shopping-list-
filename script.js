@@ -107,3 +107,34 @@ function togglePurchased(position) {
     saveList();
     showList();
 }
+function editItem(position) {
+    const item = shoppingList[position];
+ 
+    // prompt() opens a pop-up with a text box.
+    // It gives back null if the user presses Cancel.
+    const newName = prompt('Change name:', item.name);
+    if (newName === null) {
+        return; // "return" stops the function here
+    }
+    const newPrice = prompt('Change price:', item.price);
+    if (newPrice === null) {
+        return;
+    }
+    const newQuantity = prompt('Change quantity:', item.quantity);
+    if (newQuantity === null) {
+        return;
+    }
+ 
+    if (newName.trim() === '') {
+        alert('The name cannot be empty.');
+        return;
+    }
+ 
+    item.name = newName.trim();
+    // "|| 0" means: if the result is not a usable number, use 0 instead
+    item.price = Number(newPrice) || 0;
+    item.quantity = parseInt(newQuantity) || 1;
+ 
+    saveList();
+    showList();
+}
