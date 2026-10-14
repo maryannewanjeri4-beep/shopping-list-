@@ -49,3 +49,61 @@ wholeTotal = wholeTotal + cost;
 }
 
  }
+
+ const row = document.createElement('li');
+
+
+
+ if (item.purchased === true) {
+            row.classList.add('purchased-item');
+        }
+ 
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = item.selected;
+
+
+        //concantatio
+  const text = document.createElement('span');
+        text.textContent = item.name + ' (x' + item.quantity + ') - $' + cost.toFixed(2);
+        text.style.cursor = 'pointer'; // changes the curso into an arm
+        text.style.flex = '1';
+
+
+         checkbox.addEventListener('change', function () {
+            selectItem(i, checkbox.checked);
+        });
+ 
+        text.addEventListener('click', function () {
+            togglePurchased(i);
+        });
+ 
+        editButton.addEventListener('click', function () {
+            editItem(i);
+        });
+ 
+
+        row.appendChild(checkbox);  //Attaches the clickable checkbox to the far left of the row.
+        row.appendChild(text);//Attaches the clickable checkbox to the far left of the row.
+        row.appendChild(editButton);//Attaches the clickable checkbox to the far left of the row.
+        listContainer.appendChild(row);//• Takes the fully assembled row package and drops it onto your screen inside your <ul> container so the user can finally see it.
+
+//makes the totals to have 2dp
+          totalSelectedSpan.textContent = '$' + selectedTotal.toFixed(2);
+    totalPurchasedSpan.textContent = '$' + purchasedTotal.toFixed(2);
+    totalWholeSpan.textContent = '$' + wholeTotal.toFixed(2);
+    
+//functions that change the list
+    function selectItem(position, isChecked) {
+    shoppingList[position].selected = isChecked;
+    saveList();// into permanent memory
+    showList();
+}
+
+
+function togglePurchased(position) {
+    // "!" flips true to false and false to true
+    shoppingList[position].purchased = !shoppingList[position].purchased;
+    saveList();
+    showList();
+}
