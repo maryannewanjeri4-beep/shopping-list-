@@ -9,132 +9,145 @@ const totalSelectedEl = document.getElementById("total-selected");
 const totalPurchasedEl = document.getElementById("total-purchased");
 const totalWholeEl = document.getElementById("total-whole");
 
-let shoppingList = [];
+const STORAGE_KEY = "myShoppingList";
 
-//saves items to the browser
+let shoppingList = loadList();
 
-const savedText =localStorage.getItem("myShoppingList");
-if(savedText !== null){
-    shoppingList =JSON.parse(savedText);
-}   
+function loadList() {
+  const savedText = localStorage.getItem(STORAGE_KEY);
+  if (!savedText) return [];
 
-
-//saves list so that it can be stored
-function saveList(){
-    localStorage.setItem('myShoppingList', JSON.stringify(shoppingList));
+  try {
+    const parsed = JSON.parse(savedText);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error("Could not parse saved shopping list:", error);
+    return [];
+  }
 }
 
-//to show the list to the page
- function  showList(){
-   listContainer.innerHTML = ''  //prevents items from double counting
-
-   let selectedTotal = 0;
-   let purchasedTotal = 0;
-   let wholeTotal = 0;
-
-   for(let i = 0; i < shoppingList.length; i++){
-    const item = shoppingList[i]    
-
-//calculate cost:
-const cost = item.price * item.quantity;
-
-//wholecost:
-wholeTotal = wholeTotal + cost;
- if (item.purchased === true) {
-            purchasedTotal = purchasedTotal + cost;
-        }
-        if (item.selected === true) {
-            selectedTotal = selectedTotal + cost;
-   }
+function saveList() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(shoppingList));
 }
 
- }
-
- const row = document.createElement('li');
-
-
-
- if (item.purchased === true) {
-            row.classList.add('purchased-item');
-        }
- 
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = item.selected;
-
-
-        //concantatio
-  const text = document.createElement('span');
-        text.textContent = item.name + ' (x' + item.quantity + ') - $' + cost.toFixed(2);
-        text.style.cursor = 'pointer'; // changes the curso into an arm
-        text.style.flex = '1';
-
-
-         checkbox.addEventListener('change', function () {
-            selectItem(i, checkbox.checked);
-        });
- 
-        text.addEventListener('click', function () {
-            togglePurchased(i);
-        });
- 
-        editButton.addEventListener('click', function () {
-            editItem(i);
-        });
- 
-
-        row.appendChild(checkbox);  //Attaches the clickable checkbox to the far left of the row.
-        row.appendChild(text);//Attaches the clickable checkbox to the far left of the row.
-        row.appendChild(editButton);//Attaches the clickable checkbox to the far left of the row.
-        listContainer.appendChild(row);//• Takes the fully assembled row package and drops it onto your screen inside your <ul> container so the user can finally see it.
-
-//makes the totals to have 2dp
-          totalSelectedSpan.textContent = '$' + selectedTotal.toFixed(2);
-    totalPurchasedSpan.textContent = '$' + purchasedTotal.toFixed(2);
-    totalWholeSpan.textContent = '$' + wholeTotal.toFixed(2);
-    
-//functions that change the list
-    function selectItem(position, isChecked) {
-    shoppingList[position].selected = isChecked;
-    saveList();// into permanent memory
-    showList();
+function formatCurrency(value) {
+  return `KSh ${Number(value).toFixed(2)}`;
 }
 
+function updateSummary() {
+  let selectedTotal = 0;
+  let purchasedTotal = 0;
+  let wholeTotal = 0;
 
-function togglePurchased(position) {
-    // "!" flips true to false and false to true
-    shoppingList[position].purchased = !shoppingList[position].purchased;
-    saveList();
-    showList();
-}
-function editItem(position) {
-    const item = shoppingList[position];
- 
-    // prompt() opens a pop-up with a text box.
-    // It gives back null if the user presses Cancel.
-    const newName = prompt('Change name:', item.name);
-    if (newName === null) {
-        return; // "return" stops the function here
+  shoppingList.forEach((item) => {
+    const cost = Number(item.price) * Number(item.quantity);
+    wholeTotal += cost;
+
+    if (item.purchased) {
+      purchasedTotal += cost;
     }
-    const newPrice = prompt('Change price:', item.price);
-    if (newPrice === null) {
-        return;
+
+    if (item.selected) {
+      selectedTotal += cost;
     }
-    const newQuantity = prompt('Change quantity:', item.quantity);
-    if (newQuantity === null) {
-        return;
-    }
- 
-    if (newName.trim() === '') {
-        alert('The name cannot be empty.');
-        return;
-    }
- 
-    item.name = newName.trim();
-    // "|| 0" means: if the result is not a usable number, use 0 instead
-    item.price = Number(newPrice) || 0;
-    item.quantity = parseInt(newQuantity) || 1;
- 
-    saveList();
-    showList();
+  });
+
+  totalSelectedEl.textContent = formatCurrency(selectedTotal);
+  totalPurchasedEl.textContent = formatCurrency(purchasedTotal);
+  totalWholeEl.textContent = formatCurrency(wholeTotal);
 }
+
+function renderList() {
+  listContainer.innerHTML = "";
+
+  if (shoppingList.length === 0) {
+    const emptyItem = document.createElement("li");
+    emptyItem.textContent = "Your list is empty.";
+    listContainer.appendChild(emptyItem);
+    updateSummary();
+    return;
+  }
+
+  shoppingList.forEach((item, index) => {
+    const row = document.createElement("li");
+    if (item.purchased) {
+      row.classList.add("purchased-item");
+    }
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = Boolean(item.selected);
+
+    const text = document.createElement("span");
+    text.textContent = `${item.name} (x${item.quantity}) - ${formatCurrency(item.price * item.quantity)}`;
+    text.style.flex = "1";
+    text.style.cursor = "pointer";
+
+    checkbox.addEventListener("change", () => {
+      shoppingList[index].selected = checkbox.checked;
+      saveList();
+      renderList();
+    });
+
+    text.addEventListener("click", () => {
+      shoppingList[index].purchased = !shoppingList[index].purchased;
+      saveList();
+      renderList();
+    });
+
+    row.appendChild(checkbox);
+    row.appendChild(text);
+    listContainer.appendChild(row);
+  });
+
+  updateSummary();
+}
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const name = itemInput.value.trim();
+  const price = Number.parseFloat(priceInput.value);
+  const quantity = Number.parseInt(quantityInput.value, 10);
+
+  if (!name || Number.isNaN(price) || Number.isNaN(quantity) || price <= 0 || quantity <= 0) {
+    alert("Please enter a valid item name, price, and quantity.");
+    return;
+  }
+
+  shoppingList.push({
+    name,
+    price,
+    quantity,
+    purchased: false,
+    selected: false,
+  });
+
+  saveList();
+  form.reset();
+  itemInput.focus();
+  renderList();
+});
+
+markPurchasedBtn.addEventListener("click", () => {
+  shoppingList = shoppingList.map((item) => {
+    if (item.selected) {
+      return { ...item, selected: false, purchased: true };
+    }
+    return item;
+  });
+
+  saveList();
+  renderList();
+});
+
+clearListBtn.addEventListener("click", () => {
+  const confirmed = confirm("Are you sure you want to delete everything?");
+  if (!confirmed) return;
+
+  shoppingList = [];
+  saveList();
+  renderList();
+});
+
+renderList();
