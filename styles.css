@@ -53,3 +53,49 @@ h3{
     font-size: 14px;
     color: #4a4a4a;
 }
+.form-group input {
+    flex: 1; 
+    padding: 10px 12px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #0066cc; /* Subtle focus ring */
+}
+button[type="submit"] {
+    width: 100%;
+    background-color: #56b825; /* Primary action green */
+    color: #ffffff;
+    border: none;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #215c24;
+}
+
+#List-container {
+    list-style-type: none;
+    margin-bottom: 25px;
+}
+
+#List-container li {
+    background-color: #ffffff;
+    border: 1px dashed #dddddd00;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+}
