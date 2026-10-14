@@ -6,17 +6,22 @@
 body{
     height: 100vh;
     display: flex;
-    justify-content:  center;
+    justify-content: center;
     align-items: center;
     padding: 10px;
-
+    background-color: #000000;
 }
 main {
-    width: 100%;             
-    max-width: 500px;       
-    background: #7AE2CF;
+    width: 100%;
+    max-width: 500px;
+    background-image: url("https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #7AE2CF;
     padding: 40px;
     border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 h1{
     font-size: 40px;
@@ -124,7 +129,7 @@ button[type="submit"]:hover {
 
 #mark-purchased-btn {
     background-color: #e3f2fd;
-    color: #0d47a1; /* Contextual theme color */
+    color: #0d47a1; 
 }
 
 #mark-purchased-btn:hover {
@@ -133,9 +138,38 @@ button[type="submit"]:hover {
 
 #clear-list-btn {
     background-color: #ffebee;
-    color: #c62828; /* Danger button color concept */
+    color: #c62828; 
 }
 
 #clear-list-btn:hover {
     background-color: #ffcdd2;
+}
+.summary-box {
+    background-color: #f8f9fa;
+    border-top: 2px solid #e9ecef;
+    padding-top: 15px;
+    padding-right: 5px;
+    padding-bottom: 0;
+    padding-left: 5px;
+}
+
+.summary-box div {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #555555;
+    margin-bottom: 8px;
+}
+
+.summary-box div:last-child {
+    margin-bottom: 0;
+    font-weight: bold;
+    color: #000000;
+    font-size: 15px;
+    border-top: 1px dashed #dddddd;
+    padding-top: 8px;
+}
+
+.summary-box span {
+    font-variant-numeric: tabular-nums; /* Keeps currency decimals perfectly aligned alignment */
 }
